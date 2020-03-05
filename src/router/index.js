@@ -11,7 +11,7 @@ const routes = [
     component: Home
   },
   {
-    path: '/produto',
+    path: `/produto`,
     name: 'Produto',
     component: () => import('../views/Produtos')
   },
@@ -27,5 +27,5 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-
+router.beforeEach
 export default router

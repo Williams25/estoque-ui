@@ -6,6 +6,5 @@ export default {
     },
     cadastrarUsuario:(usuario) => {
         return http.post(`usuario`, usuario)
-    }
-    
+    }   
 }

@@ -35,13 +35,13 @@
                   <v-spacer></v-spacer>
 
                   <router-link to="/cadastroUsuario" class="pr-5">Cadastrar-se</router-link>
-                  
+
                   <v-btn
-                    :to.sync="rota.login"
                     class="v-button"
                     color="dark"
                     dark
                     @click="validaLogin"
+                    :to="rota.login"
                   >Login</v-btn>
 
                   <v-snackbar v-model="snackbar">
@@ -76,14 +76,17 @@ export default {
   methods: {
     validaLogin() {
       if (this.senha == "" || this.email == "") {
-        this.text = "Preencha os campos corretamentes.";
+        this.text = "Preencha os campos.";
         this.snackbar = true;
       } else if (this.senha != "" && this.email != "") {
         this.snackbar = false;
         Usuario.login(this.email, this.senha)
           .then(res => {
             this.usuario = res.data;
-            this.rota.login = "produto";
+            localStorage['usuario'] = JSON.stringify({
+              id: res.data.id
+            })
+            this.$router.push('/produto')
           })
           .catch(erro => {
             console.log(erro);

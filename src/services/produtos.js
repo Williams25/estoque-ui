@@ -6,5 +6,8 @@ export default {
     },
     produtoId(id) {
         return http.get(`produto/${id}`)
+    },
+    apagarProduto(id) {
+        return http.delete(`produto/${id}`)
     }
 }
