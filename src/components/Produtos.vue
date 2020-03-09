@@ -2,20 +2,17 @@
   <section class="produto mt-5">
     <v-data-table
       :headers="headers"
-      :items="produto"
-      sort-by="produtos"
+      :items="produtoArray"
+      :sort-by="produtoArray"
       :items-per-page="5"
       :search="search"
       class="elevation-1"
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-card-title>
-            Estoque de Produtos
-            <v-spacer></v-spacer>
-            <v-divider class="mx-4" inset vertical></v-divider>
-          </v-card-title>
-          <v-spacer></v-spacer>
+          <v-card-title>Estoque de Produtos</v-card-title>
+          <v-divider class="mx-5" inset vertical></v-divider>
+
           <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
@@ -23,49 +20,19 @@
             single-line
             hide-details
           ></v-text-field>
+          <v-divider class="mx-5" inset vertical></v-divider>
 
-          <!-- Modal para editar  -->
-          <v-dialog v-model="dialogEditar" max-width="500px">
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="produto.nome" label="Nome do produto"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="produto.descricao" label="Descrição"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="produto.quantidade" label="Quantidade"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="produto.valor" label="Valor"></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="v-button blue darken-1" text>Cancel</v-btn>
-                <v-btn color="v-button blue darken-1" text>Save</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <!-- fim modal editar -->
+          <v-btn class="v-button adicionar" @click="$router.push('/cadastrarProduto')">
+            <!-- <img src="" alt /> -->
+          </v-btn>
         </v-toolbar>
       </template>
-      <template v-slot:item.action="{ item = produto.id }">
-        <v-icon small class="mr-2" @click.stop="dialogEditar = true">mdi-pencil</v-icon>
-        <v-icon small @click="modal(item)">mdi-delete</v-icon>
+      <template v-slot:item.action="{ item = produtoArray.id }">
+        <v-icon small class="mr-2" @click="modalEditar(item)">mdi-pencil</v-icon>
+        <v-icon small @click="modalApagar(item)">mdi-delete</v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="v-button primary">Reset</v-btn>
+        <p>Não contem items em estoque</p>
       </template>
     </v-data-table>
 
@@ -78,13 +45,54 @@
         <v-card-text>Valor: {{produtoDialog.valor}}</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="v-button green darken-5" text @click="dialog = false">Calcelar</v-btn>
-          <v-btn color="v-buttonn green darken-1" text @click="deleteItem(produtoDialog.id)">Apagar</v-btn>
+          <v-btn color="v-button green darken-5 v-button" text @click="dialog = false">Calcelar</v-btn>
+          <v-btn
+            color="v-buttonn green darken-1 v-button"
+            text
+            @click="deleteItem(produtoDialog.id)"
+          >Apagar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- fim modal apagar -->
+
+    <v-row justify="center">
+      <v-dialog v-model="dialogEditar" persistent max-width="600px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Editar Produto</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <input v-model="produtoDialog.id" required  type="hidden" />
+
+                <input label="id_usuario" v-model="produtoDialog.id_usuario"  required type="hidden" />
+
+                <v-col cols="12">
+                  <v-text-field label="Nome Produto" v-model="produtoDialog.nome" required></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="Descrição" v-model="produtoDialog.descricao" required></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="Quantidade" v-model="produtoDialog.quantidade" required></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="valor" v-model="produtoDialog.valor" required></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1 v-button" text @click="dialogEditar = false">Close</v-btn>
+            <v-btn color="blue darken-1 v-button" text @click="editarprod">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </section>
 </template>
 <script>
@@ -101,36 +109,38 @@ export default {
         sortable: true,
         value: "nome"
       },
+      { text: "Descrição", value: "descricao" },
       { text: "Quantidade", value: "quantidade" },
       { text: "Valor", value: "valor" },
-      { text: "Descrição", value: "descricao" },
       { text: "Opções", value: "action", sortable: false }
     ],
-    produto: [],
+    produtoArray: [],
     produtoDialog: [],
+    produto: {},
     search: "",
-    formTitle: "Editar Produto"
+    id: "",
+    id_usuario: ""
   }),
 
   mounted() {
+    this.id_usuario = JSON.parse(localStorage["usuario"]);
     this.listarProdutos();
   },
 
   methods: {
     listarProdutos() {
-      Produto.listarProdutos()
+      Produto.listarProdutos(this.id_usuario.id)
         .then(res => {
-          this.produto = res.data;
+          this.produtoArray = res.data;
         })
         .catch(e => {
           console.log(e);
         });
     },
 
-    modal(item) {
-      console.log((item = item.id));
+    modalApagar(item) {
       this.dialog = true;
-      Produto.produtoId(item)
+      Produto.produtoId(item.id)
         .then(res => {
           this.produtoDialog = res.data;
         })
@@ -148,9 +158,54 @@ export default {
         .catch(e => {
           console.log(e.data);
         });
+    },
+
+    modalEditar(value) {
+      this.dialogEditar = true;
+      Produto.produtoId(value.id)
+        .then(res => {
+          this.produtoDialog = res.data;
+          console.log(value);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+
+    editarprod() {
+      this.produto = {
+        id: this.produtoDialog.id,
+        id_usuario: this.id_usuario.id,
+        nome: this.produtoDialog.nome,
+        descricao: this.produtoDialog.descricao,
+        quantidade: this.produtoDialog.quantidade,
+        valor: this.produtoDialog.valor
+      };
+      console.log(this.produto)
+      Produto.editarProduto(this.produto)
+        .then(res => {
+          this.produto = res.data;
+          this.listarProdutos();
+          this.dialogEditar = false;
+        })
+        .catch(e => {
+          this.dialogEditar = false;
+          console.log(e.response.data);
+        });
     }
   }
 };
 </script>
 
-<style lang="stylus" scoped></style>
+<style  scoped>
+.v-button {
+  outline: none;
+}
+.adicionar {
+  background-image: url("../assets/img/plus.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  border: none;
+}
+</style>

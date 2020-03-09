@@ -41,12 +41,11 @@
                     color="dark"
                     dark
                     @click="validaLogin"
-                    :to="rota.login"
                   >Login</v-btn>
 
                   <v-snackbar v-model="snackbar">
                     {{ text }}
-                    <v-btn color="orange" class="v-button" text @click="snackbar = false">Close</v-btn>
+                    <v-btn color="orange" class="v-button" text @click="snackbar = false">Fechar</v-btn>
                   </v-snackbar>
                 </v-card-actions>
               </v-card>
