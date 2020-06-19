@@ -1,7 +1,10 @@
 <template>
-  <div class="produto container">
-    <app-produto />
-  </div>
+  <section class="produto">
+    <app-menu />
+    <div class="container mb-5">
+      <app-produto />
+    </div>
+  </section>
 </template>
 
 <script>
