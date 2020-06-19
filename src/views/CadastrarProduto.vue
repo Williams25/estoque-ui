@@ -1,5 +1,6 @@
 <template>
   <section class="CadastroProduto">
+    <app-menu class="mb-5" />
     <app-cadastrar-produto />
   </section>
 </template>
