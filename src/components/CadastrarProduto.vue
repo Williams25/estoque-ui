@@ -1,5 +1,5 @@
 <template>
-  <div class="CadastroProduto container mt-5">
+  <div class="CadastroProduto container">
     <v-row justify="center">
       <v-card>
         <v-card-title>
@@ -11,31 +11,50 @@
               <input label="id_usuario" v-model="produto.id_usuario" type="hidden" required />
 
               <v-col cols="12">
-                <v-text-field label="Nome Produto" v-model="produto.nome" required></v-text-field>
+                <v-text-field type="text" label="Nome Produto" v-model="produto.nome" required></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field label="Descrição" v-model="produto.descricao" required></v-text-field>
+                <v-text-field type="text" label="Descrição" v-model="produto.descricao" required></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field label="Quantidade" v-model="produto.quantidade" required></v-text-field>
+                <v-text-field
+                  type="number"
+                  label="Quantidade exemplo:(1, 100)"
+                  v-model="produto.quantidade"
+                  required
+                ></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field label="valor" v-model="produto.valor" required></v-text-field>
+                <v-text-field
+                  type="number"
+                  label="Valor exemplo:(2.99, 100.00)"
+                  v-model="produto.valor"
+                  required
+                ></v-text-field>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1 v-button" text @click="$router.push('/produto')">Voltar</v-btn>
-          <v-btn color="blue darken-1 v-button" text @click="cadastrarProduto">Save</v-btn>
+          <b-button variant="danger" class="ml-2 mr-2" @click="$router.push('/produto')">Voltar</b-button>
+          <b-button variant="primary" class="ml-2 mr-2" @click="cadastrarProduto">Salvar</b-button>
         </v-card-actions>
       </v-card>
     </v-row>
 
-    <v-snackbar v-model="snackbar">
+    <v-snackbar
+      class="mt-5"
+      v-model="snackbar"
+      :color="color"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
       {{ text }}
-      <v-btn color="orange" class="v-button" text @click="snackbar = false">Fechar</v-btn>
+      <v-btn color="normal" class="v-button" text @click="snackbar = false">Fechar</v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -44,10 +63,15 @@
 import Produto from "../services/produtos";
 export default {
   data: () => ({
+    color: "success",
+    mode: "",
+    snackbar: false,
+    text: "",
+    timeout: 3000,
+    x: "right",
+    y: "top",
     produto: {},
     id_usuario: "",
-    snackbar: false,
-    text: ""
   }),
 
   mounted() {
@@ -63,19 +87,33 @@ export default {
         quantidade: this.produto.quantidade,
         valor: this.produto.valor
       };
+
+      if (
+        !this.produto.nome ||
+        !this.produto.descricao ||
+        !this.produto.quantidade ||
+        !this.produto.valor ||
+        !this.produto.id_usuario
+      ) {
+        this.text = "Preencha todos os campos!";
+        this.color = "warning";
+        return (this.snackbar = true);
+      }
+
       Produto.cadastrarProduto(this.produto)
         .then(res => {
-          this.text = "Produto Cadastrado";
-          this.snackbar = true;
           this.produto = res.data;
           this.produto = {};
-        })
-        .catch(e => {
-          this.text = "Preencha todos os campos";
+          this.text = "Produto cadastrado com sucesso!";
+          this.color = "success";
           this.snackbar = true;
-          e;
+        })
+        .catch(erro => {
+          this.text = erro.response.data.message;
+          this.color = "error";
+          this.snackbar = true;
         });
-    }
+    },
   }
 };
 </script>
