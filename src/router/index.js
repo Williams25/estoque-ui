@@ -24,7 +24,7 @@ const routes = [
     path: '/cadastrarProduto',
     name: 'CadastroProduto',
     component: () => import('../views/CadastrarProduto')
-  }
+  },
 ]
 
 const router = new VueRouter({
