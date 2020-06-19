@@ -14,17 +14,17 @@
                   <v-form @submit.prevent>
                     <v-text-field
                       id="user"
-                      label="Email"
-                      name="email"
-                      prepend-icon="mdi-email"
+                      label="Usuário"
+                      name="usuario"
+                      :prepend-icon="svgPath"
                       type="text"
-                      v-model="email"
+                      v-model="loginUsuario"
                     />
 
                     <v-text-field
                       id="password"
-                      label="Password"
-                      name="password"
+                      label="Senha"
+                      name="senha"
                       prepend-icon="mdi-lock"
                       type="password"
                       v-model="senha"
@@ -36,16 +36,20 @@
 
                   <router-link to="/cadastroUsuario" class="pr-5">Cadastrar-se</router-link>
 
-                  <v-btn
-                    class="v-button"
-                    color="dark"
-                    dark
-                    @click="validaLogin"
-                  >Login</v-btn>
-
-                  <v-snackbar v-model="snackbar">
+                  <v-btn class="v-button" color="dark" dark @click="validaLogin">Login</v-btn>
+                                    
+                  <v-snackbar
+                    class="mt-5"
+                    v-model="snackbar"
+                    :color="color"
+                    :multi-line="mode === 'multi-line'"
+                    :right="x === 'right'"
+                    :timeout="timeout"
+                    :top="y === 'top'"
+                    :vertical="mode === 'vertical'"
+                  >
                     {{ text }}
-                    <v-btn color="orange" class="v-button" text @click="snackbar = false">Fechar</v-btn>
+                    <v-btn color="normal" class="v-button" text @click="snackbar = false">Fechar</v-btn>
                   </v-snackbar>
                 </v-card-actions>
               </v-card>
@@ -59,39 +63,44 @@
 
 <script>
 import Usuario from "../services/usuarios";
+import { mdiAccount } from '@mdi/js'
 export default {
   data: () => ({
-    valida: false,
+    svgPath: mdiAccount,
+    color: "success",
+    mode: "",
     snackbar: false,
-    senha: "",
-    email: "",
     text: "",
-    rota: {
-      login: ""
-    },
+    timeout: 3000,
+    x: "right",
+    y: "top",
+    valida: false,
+    senha: "",
+    loginUsuario: "",
     usuario: []
   }),
 
   methods: {
     validaLogin() {
-      if (this.senha == "" || this.email == "") {
-        this.text = "Preencha os campos.";
+      if (this.senha == "" || this.loginUsuario == "") {
+        this.text = "Preencha todos os campos corretamentes!";
+        this.color = "warning";
         this.snackbar = true;
-      } else if (this.senha != "" && this.email != "") {
+      } else if (this.senha != "" && this.loginUsuario != "") {
         this.snackbar = false;
-        Usuario.login(this.email, this.senha)
+        Usuario.login(this.loginUsuario, this.senha)
           .then(res => {
             this.usuario = res.data;
-            localStorage['usuario'] = JSON.stringify({
+            localStorage["usuario"] = JSON.stringify({
               id: res.data.id
-            })
-            this.$router.push('/produto')
+            });
+            this.$router.push("/produto");
           })
           .catch(erro => {
             console.log(erro);
-            this.text = "Campos incorretos.";
+            this.text = "Erro ao realizar o login verifique usuario e senha";
+            this.color = "error";
             this.snackbar = true;
-            this.rota.login;
           });
       }
     }
