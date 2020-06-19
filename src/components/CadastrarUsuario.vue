@@ -14,32 +14,42 @@
                   <v-form>
                     <v-text-field
                       id="user"
-                      label="Email"
-                      name="email"
-                      prepend-icon="mdi-email"
+                      label="Usuário"
+                      name="usuario"
+                      :prepend-icon="svgPath"
                       type="text"
-                      v-model="email"
+                      v-model="cadastroUsuario"
                     />
 
                     <v-text-field
                       id="password"
-                      label="Password"
-                      name="password"
+                      label="Senha"
+                      name="senha"
                       prepend-icon="mdi-lock"
                       type="password"
                       v-model="senha"
                     />
                   </v-form>
                 </v-card-text>
+
                 <v-card-actions>
                   <v-spacer></v-spacer>
 
                   <router-link to="/" class="pr-5">Voltar</router-link>
                   <v-btn class="v-button" color="dark" dark @click.stop="CadastrarUsuario">Cadastrar</v-btn>
 
-                  <v-snackbar v-model="snackbar">
+                  <v-snackbar
+                    class="mt-5"
+                    v-model="snackbar"
+                    :color="color"
+                    :multi-line="mode === 'multi-line'"
+                    :right="x === 'right'"
+                    :timeout="timeout"
+                    :top="y === 'top'"
+                    :vertical="mode === 'vertical'"
+                  >
                     {{ text }}
-                    <v-btn class="v-button" color="orange" text @click="snackbar = false">Close</v-btn>
+                    <v-btn color="normal" class="v-button" text @click="snackbar = false">Fechar</v-btn>
                   </v-snackbar>
                 </v-card-actions>
               </v-card>
@@ -52,40 +62,50 @@
 </template>
 <script>
 import Usuario from "../services/usuarios";
+import { mdiAccount } from "@mdi/js";
 export default {
   data: () => ({
-    valida: false,
+    svgPath: mdiAccount,
+    color: "success",
+    mode: "",
     snackbar: false,
-    senha: "",
-    email: "",
     text: "",
+    timeout: 3000,
+    x: "right",
+    y: "top",
+    valida: false,
+    senha: "",
+    cadastroUsuario: "",
     usuario: {}
   }),
 
   methods: {
     CadastrarUsuario() {
-      if (this.senha == "" || this.email == "") {
-        this.text = "Preencha os campos corretamentes.";
+      if (this.senha == "" || this.cadastroUsuario == "") {
+        this.text = "Preencha todos os campos corretamentes!";
+        this.color = "warning";
         this.snackbar = true;
-      } else if (this.senha != "" && this.email != "") {
+      } else if (this.senha != "" && this.cadastroUsuario != "") {
         this.snackbar = false;
 
         this.usuario = {
-          usuario: this.email,
+          usuario: this.cadastroUsuario,
           senha: this.senha
         };
 
         Usuario.cadastrarUsuario(this.usuario)
           .then(res => {
             this.usuario = res.data;
+            this.text = "Usuario cadastrado com sucesso!";
+            this.color = "success";
             this.snackbar = true;
-            this.text = "Usuario cadastrado.";
-            this.email = this.senha = "";
+            this.cadastroUsuario = this.senha = "";
           })
           .catch(erro => {
-            console.log(erro);
-            this.text = "Usuario já existente.";
+            this.text = "Erro usuario não disponivel!";
+            this.color = "error";
             this.snackbar = true;
+            erro;
           });
       }
     }
