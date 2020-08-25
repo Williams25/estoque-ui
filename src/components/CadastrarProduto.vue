@@ -71,11 +71,13 @@ export default {
     x: "right",
     y: "top",
     produto: {},
-    id_usuario: "",
+    id_usuario: ""
   }),
 
   mounted() {
-    this.id_usuario = JSON.parse(localStorage["usuario"]);
+    if (!this.recuperaStorage()) {
+      return this.$router.push("/");
+    }
   },
 
   methods: {
@@ -114,6 +116,14 @@ export default {
           this.snackbar = true;
         });
     },
+    recuperaStorage() {
+      try {
+        this.id_usuario = JSON.parse(localStorage["usuario"]);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
   }
 };
 </script>

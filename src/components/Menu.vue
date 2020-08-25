@@ -12,9 +12,9 @@
         <b-nav-item>
           <router-link to="cadastrarProduto" class="menu_item mt-2">Cadastrar produto</router-link>
         </b-nav-item>
-        <b-nav-item>
+        <!-- <b-nav-item>
           <router-link to="cadastrarProduto" class="menu_item mt-2">Baixa de estoque</router-link>
-        </b-nav-item>
+        </b-nav-item> -->
         <b-nav-item @click="removeStorage" class="menu_item">Sair</b-nav-item>
       </b-navbar-nav>
     </b-collapse>

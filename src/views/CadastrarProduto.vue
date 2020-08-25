@@ -1,16 +1,16 @@
 <template>
   <section class="CadastroProduto">
     <app-menu class="mb-5" />
-    <app-cadastrar-produto />
+    <app-cadastrar-produto class="mb-5" />
+
+    <app-footer />
   </section>
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
-<style>
+<style scoped>
 
 </style>

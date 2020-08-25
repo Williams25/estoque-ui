@@ -36,7 +36,12 @@
                   <v-spacer></v-spacer>
 
                   <router-link to="/" class="pr-5">Voltar</router-link>
-                  <v-btn class="v-button" color="dark" dark @click.stop="CadastrarUsuario">Cadastrar</v-btn>
+                  <v-btn
+                    class="v-button"
+                    color="dark"
+                    dark
+                    @click.stop.prevent="CadastrarUsuario"
+                  >Cadastrar</v-btn>
 
                   <v-snackbar
                     class="mt-5"
@@ -85,6 +90,10 @@ export default {
         this.text = "Preencha todos os campos corretamentes!";
         this.color = "warning";
         this.snackbar = true;
+      } else if (this.senha.length < 3) {
+        this.text = "A senha deve conter no minimo 3 caracteres!";
+        this.color = "warning";
+        return (this.snackbar = true);
       } else if (this.senha != "" && this.cadastroUsuario != "") {
         this.snackbar = false;
 

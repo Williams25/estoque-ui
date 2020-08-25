@@ -4,18 +4,19 @@
     <div class="container mb-5">
       <app-produto />
     </div>
+    <app-footer />
   </section>
 </template>
 
 <script>
-
-export default {
-  
-};
+export default {};
 </script>
 
 <style>
 .v-button {
   outline: none;
+}
+.produto {
+  z-index: 2;
 }
 </style>

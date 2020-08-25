@@ -257,4 +257,8 @@ export default {
   background-size: 1rem;
   border: none;
 }
+.produto {
+  flex: 1;
+  z-index: 5;
+}
 </style>
